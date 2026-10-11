@@ -6,7 +6,7 @@ def create_icons():
     output_dir = "icons"
     os.makedirs(output_dir, exist_ok=True)
 
-    # We draw at 1024x1024 for supersampling anti-aliasing
+    # Draw at 1024x1024 for high quality supersampling
     S = 1024
 
     def get_canvas():
@@ -278,11 +278,9 @@ def create_icons():
     # --- 11. Timeline Explorer ---
     def make_timeline_explorer():
         img = get_canvas()
-        # Deep space violet to futuristic cyan gradient background
         bg = draw_linear_gradient_rounded_rect(S, (128, 128, 896, 896), 160, (90, 24, 154, 255), (15, 12, 41, 255))
         img = Image.alpha_composite(img, bg)
 
-        # Layer 1: Distant temporal window card (old state)
         c1 = Image.new("RGBA", (S, S), (0, 0, 0, 0))
         draw1 = ImageDraw.Draw(c1)
         draw1.rounded_rectangle((260, 250, 680, 510), radius=28, fill=(255, 255, 255, 50), outline=(255, 255, 255, 90), width=4)
@@ -291,7 +289,6 @@ def create_icons():
         c1 = add_drop_shadow(c1, offset=(-20, -10), blur=20, shadow_color=(0, 0, 0, 70))
         img = Image.alpha_composite(img, c1)
 
-        # Layer 2: Mid temporal window card (intermediate state)
         c2 = Image.new("RGBA", (S, S), (0, 0, 0, 0))
         draw2 = ImageDraw.Draw(c2)
         draw2.rounded_rectangle((320, 330, 740, 590), radius=28, fill=(255, 255, 255, 100), outline=(255, 255, 255, 140), width=4)
@@ -301,51 +298,40 @@ def create_icons():
         c2 = add_drop_shadow(c2, offset=(-10, 5), blur=20, shadow_color=(0, 0, 0, 80))
         img = Image.alpha_composite(img, c2)
 
-        # Layer 3: Foreground desktop screen card (current state)
         c3 = Image.new("RGBA", (S, S), (0, 0, 0, 0))
         draw3 = ImageDraw.Draw(c3)
         draw3.rounded_rectangle((380, 410, 800, 670), radius=28, fill=(20, 25, 45, 235), outline=(0, 225, 255, 220), width=6)
-        # Desktop header bar
         draw3.rounded_rectangle((380, 410, 800, 455), radius=28, fill=(35, 45, 75, 255))
         draw3.ellipse((405, 427, 420, 442), fill=(255, 90, 90, 255))
         draw3.ellipse((430, 427, 445, 442), fill=(255, 200, 80, 255))
         draw3.ellipse((455, 427, 470, 442), fill=(80, 220, 120, 255))
-        # Desktop app windows mock
         draw3.rounded_rectangle((410, 480, 580, 630), radius=16, fill=(0, 150, 255, 200))
         draw3.rounded_rectangle((600, 480, 770, 560), radius=16, fill=(180, 70, 240, 200))
         draw3.rounded_rectangle((600, 580, 770, 630), radius=12, fill=(0, 230, 180, 200))
         c3 = add_drop_shadow(c3, offset=(0, 20), blur=30, shadow_color=(0, 0, 0, 110))
         img = Image.alpha_composite(img, c3)
 
-        # Timeline Axis & Nodes at bottom
         tl = Image.new("RGBA", (S, S), (0, 0, 0, 0))
         tldraw = ImageDraw.Draw(tl)
-        # Glowing Timeline horizontal bar
         tldraw.rounded_rectangle((220, 740, 804, 756), radius=8, fill=(0, 230, 255, 255))
 
-        # Timeline nodes
         nodes_x = [280, 420, 560, 700]
         for idx, nx in enumerate(nodes_x):
             if idx == 2:
-                # Active/Selected node
                 tldraw.ellipse((nx - 24, 748 - 24, nx + 24, 748 + 24), fill=(255, 255, 255, 255), outline=(0, 230, 255, 255), width=8)
                 tldraw.ellipse((nx - 12, 748 - 12, nx + 12, 748 + 12), fill=(0, 210, 255, 255))
             else:
                 tldraw.ellipse((nx - 16, 748 - 16, nx + 16, 748 + 16), fill=(255, 255, 255, 220), outline=(100, 110, 150, 200), width=4)
 
-        # Rewind / Timeline Clock Badge at Top Right
         badge = Image.new("RGBA", (S, S), (0, 0, 0, 0))
         bdraw = ImageDraw.Draw(badge)
         bcx, bcy = 710, 290
         br = 110
         bdraw.ellipse((bcx - br, bcy - br, bcx + br, bcy + br), fill=(0, 225, 255, 245), outline=(255, 255, 255, 255), width=8)
 
-        # Counter-clockwise rewind arrow arc
         bdraw.arc((bcx - 70, bcy - 70, bcx + 70, bcy + 70), start=40, end=320, fill=(20, 25, 50, 255), width=18)
-        # Arrowhead at top end of arc
         arrow_head = [(bcx - 15, bcy - 85), (bcx + 25, bcy - 70), (bcx - 5, bcy - 40)]
         bdraw.polygon(arrow_head, fill=(20, 25, 50, 255))
-        # Clock hands
         bdraw.line((bcx, bcy, bcx, bcy - 40), fill=(20, 25, 50, 255), width=14)
         bdraw.line((bcx, bcy, bcx - 30, bcy), fill=(20, 25, 50, 255), width=14)
         bdraw.ellipse((bcx - 12, bcy - 12, bcx + 12, bcy + 12), fill=(20, 25, 50, 255))
@@ -355,7 +341,164 @@ def create_icons():
 
         img = Image.alpha_composite(img, tl)
         img = Image.alpha_composite(img, badge)
+        return img
 
+    # --- 12. DiscoMode ---
+    def make_discomode():
+        img = get_canvas()
+        bg = draw_linear_gradient_rounded_rect(S, (128, 128, 896, 896), 160, (255, 0, 128, 255), (70, 0, 150, 255))
+        img = Image.alpha_composite(img, bg)
+
+        disco = Image.new("RGBA", (S, S), (0, 0, 0, 0))
+        ddraw = ImageDraw.Draw(disco)
+        cx, cy = S // 2, 420
+        r = 210
+
+        ddraw.ellipse((cx - r, cy - r, cx + r, cy + r), fill=(240, 240, 255, 255), outline=(255, 255, 255, 255), width=8)
+
+        for i in range(-r + 30, r - 20, 45):
+            h = int(math.sqrt(max(0, r*r - i*i)))
+            ddraw.line((cx + i, cy - h, cx + i, cy + h), fill=(180, 200, 240, 180), width=6)
+        for j in range(-r + 30, r - 20, 45):
+            w = int(math.sqrt(max(0, r*r - j*j)))
+            ddraw.line((cx - w, cy + j, cx + w, cy + j), fill=(180, 200, 240, 180), width=6)
+
+        ddraw.line((cx, 128, cx, cy - r), fill=(255, 255, 255, 200), width=8)
+
+        eq_colors = [(0, 240, 255), (255, 0, 200), (255, 230, 0), (0, 255, 120), (255, 100, 0)]
+        bars_x = [240, 350, 460, 570, 680]
+        bars_h = [180, 280, 360, 250, 190]
+        for x, h, col in zip(bars_x, bars_h, eq_colors):
+            ddraw.rounded_rectangle((x, 780 - h, x + 70, 780), radius=20, fill=col + (240,))
+
+        disco = add_drop_shadow(disco, offset=(0, 15), blur=25)
+        return Image.alpha_composite(img, disco)
+
+    # --- 13. GameGetLink ---
+    def make_gamegetlink():
+        img = get_canvas()
+        bg = draw_linear_gradient_rounded_rect(S, (128, 128, 896, 896), 160, (0, 180, 210, 255), (0, 70, 150, 255))
+        img = Image.alpha_composite(img, bg)
+
+        game = Image.new("RGBA", (S, S), (0, 0, 0, 0))
+        gdraw = ImageDraw.Draw(game)
+
+        ctrl_box = (220, 360, 804, 700)
+        gdraw.rounded_rectangle(ctrl_box, radius=120, fill=(245, 248, 255, 255), outline=(200, 220, 250, 255), width=8)
+
+        gdraw.rounded_rectangle((320, 490, 420, 570), radius=15, fill=(40, 50, 70, 255))
+        gdraw.rounded_rectangle((345, 465, 395, 595), radius=15, fill=(40, 50, 70, 255))
+
+        btn_center = (700, 530)
+        btn_offsets = [(0, -45, (255, 80, 80)), (45, 0, (80, 220, 120)), (-45, 0, (255, 200, 50)), (0, 45, (80, 140, 255))]
+        for dx, dy, col in btn_offsets:
+            bx, by = btn_center[0] + dx, btn_center[1] + dy
+            gdraw.ellipse((bx - 18, by - 18, bx + 18, by + 18), fill=col + (255,))
+
+        badge = Image.new("RGBA", (S, S), (0, 0, 0, 0))
+        bdraw = ImageDraw.Draw(badge)
+        bdraw.ellipse((420, 190, 600, 370), fill=(255, 180, 0, 255), outline=(255, 255, 255, 255), width=8)
+        bdraw.rectangle((490, 230, 530, 300), fill=(255, 255, 255, 255))
+        bdraw.polygon([(460, 290), (560, 290), (510, 340)], fill=(255, 255, 255, 255))
+
+        badge = add_drop_shadow(badge, offset=(0, 12), blur=20)
+        game = add_drop_shadow(game, offset=(0, 15), blur=25)
+
+        img = Image.alpha_composite(img, game)
+        img = Image.alpha_composite(img, badge)
+        return img
+
+    # --- 14. LinkMyDevice ---
+    def make_linkmydevice():
+        img = get_canvas()
+        bg = draw_linear_gradient_rounded_rect(S, (128, 128, 896, 896), 160, (20, 140, 255, 255), (10, 60, 180, 255))
+        img = Image.alpha_composite(img, bg)
+
+        dev = Image.new("RGBA", (S, S), (0, 0, 0, 0))
+        ddraw = ImageDraw.Draw(dev)
+
+        ddraw.line((320, 360, 700, 360), fill=(0, 240, 255, 220), width=12)
+        ddraw.line((320, 360, 512, 680), fill=(0, 240, 255, 220), width=12)
+        ddraw.line((700, 360, 512, 680), fill=(0, 240, 255, 220), width=12)
+
+        ddraw.rounded_rectangle((220, 260, 420, 390), radius=16, fill=(240, 245, 255, 255), outline=(0, 200, 255, 255), width=6)
+        ddraw.rounded_rectangle((240, 280, 400, 360), radius=10, fill=(30, 40, 65, 255))
+        ddraw.rounded_rectangle((190, 390, 450, 410), radius=8, fill=(200, 210, 230, 255))
+
+        ddraw.rounded_rectangle((600, 240, 800, 380), radius=16, fill=(240, 245, 255, 255), outline=(0, 200, 255, 255), width=6)
+        ddraw.rounded_rectangle((620, 260, 780, 360), radius=10, fill=(30, 40, 65, 255))
+        ddraw.rectangle((685, 380, 715, 410), fill=(200, 210, 230, 255))
+        ddraw.rounded_rectangle((650, 410, 750, 425), radius=6, fill=(200, 210, 230, 255))
+
+        ddraw.rounded_rectangle((450, 580, 570, 780), radius=22, fill=(240, 245, 255, 255), outline=(0, 200, 255, 255), width=6)
+        ddraw.rounded_rectangle((465, 600, 555, 750), radius=14, fill=(30, 40, 65, 255))
+        ddraw.ellipse((502, 756, 518, 772), fill=(180, 190, 210, 255))
+
+        badge = Image.new("RGBA", (S, S), (0, 0, 0, 0))
+        bdraw = ImageDraw.Draw(badge)
+        bdraw.ellipse((442, 402, 582, 542), fill=(0, 230, 255, 255), outline=(255, 255, 255, 255), width=8)
+        bdraw.arc((472, 432, 552, 512), start=30, end=170, fill=(15, 30, 70, 255), width=12)
+        bdraw.arc((472, 432, 552, 512), start=210, end=350, fill=(15, 30, 70, 255), width=12)
+
+        dev = add_drop_shadow(dev, offset=(0, 15), blur=25)
+        badge = add_drop_shadow(badge, offset=(0, 10), blur=20)
+
+        img = Image.alpha_composite(img, dev)
+        img = Image.alpha_composite(img, badge)
+        return img
+
+    # --- 15. Find This ID/IP ---
+    def make_find_this_id_ip():
+        img = get_canvas()
+        bg = draw_linear_gradient_rounded_rect(S, (128, 128, 896, 896), 160, (15, 23, 42, 255), (30, 41, 59, 255))
+        img = Image.alpha_composite(img, bg)
+
+        net = Image.new("RGBA", (S, S), (0, 0, 0, 0))
+        ndraw = ImageDraw.Draw(net)
+
+        cx, cy = S // 2 - 40, S // 2 - 40
+
+        ndraw.ellipse((cx - 260, cy - 260, cx + 260, cy + 260), outline=(0, 230, 160, 80), width=6)
+        ndraw.ellipse((cx - 180, cy - 180, cx + 180, cy + 180), outline=(0, 230, 160, 140), width=6)
+        ndraw.ellipse((cx - 100, cy - 100, cx + 100, cy + 100), outline=(0, 230, 160, 200), width=6)
+
+        ndraw.line((cx - 280, cy, cx + 280, cy), fill=(0, 230, 160, 100), width=4)
+        ndraw.line((cx, cy - 280, cx, cy + 280), fill=(0, 230, 160, 100), width=4)
+
+        targets = [(cx - 120, cy - 80), (cx + 140, cy - 120), (cx + 80, cy + 130)]
+        for tx, ty in targets:
+            ndraw.ellipse((tx - 16, ty - 16, tx + 16, ty + 16), fill=(0, 255, 180, 255))
+
+        mag = Image.new("RGBA", (S, S), (0, 0, 0, 0))
+        mdraw = ImageDraw.Draw(mag)
+
+        mcx, mcy = S // 2 + 30, S // 2 + 30
+        mr = 170
+        mdraw.ellipse((mcx - mr, mcy - mr, mcx + mr, mcy + mr), outline=(0, 240, 255, 255), width=24)
+        mdraw.ellipse((mcx - mr + 12, mcy - mr + 12, mcx + mr - 12, mcy + mr - 12), fill=(0, 180, 255, 40))
+
+        handle_pts = [(mcx + 120, mcy + 120), (mcx + 260, mcy + 260)]
+        mdraw.line(handle_pts, fill=(0, 240, 255, 255), width=36)
+
+        # IP address digital segments representation inside magnifying lens
+        # Draw "IP" text style graphic or IP node segments
+        ip_badge_box = (mcx - 110, mcy - 40, mcx + 110, mcy + 40)
+        mdraw.rounded_rectangle(ip_badge_box, radius=16, fill=(0, 230, 160, 255))
+        # Draw "IP" letters in badge
+        # 'I'
+        mdraw.line((mcx - 70, mcy - 20, mcx - 70, mcy + 20), fill=(15, 23, 42, 255), width=10)
+        # 'P'
+        mdraw.line((mcx - 30, mcy - 20, mcx - 30, mcy + 20), fill=(15, 23, 42, 255), width=10)
+        mdraw.rounded_rectangle((mcx - 30, mcy - 20, mcx + 10, mcy), radius=6, outline=(15, 23, 42, 255), width=10)
+        # Dots '. . .'
+        for dx in [35, 55, 75]:
+            mdraw.ellipse((mcx + dx - 4, mcy + 12, mcx + dx + 4, mcy + 20), fill=(15, 23, 42, 255))
+
+        net = add_drop_shadow(net, offset=(0, 10), blur=20)
+        mag = add_drop_shadow(mag, offset=(0, 20), blur=30)
+
+        img = Image.alpha_composite(img, net)
+        img = Image.alpha_composite(img, mag)
         return img
 
     apps = {
@@ -370,6 +513,10 @@ def create_icons():
         "task_manager": make_task_manager,
         "photo_viewer": make_photo_viewer,
         "timeline_explorer": make_timeline_explorer,
+        "discomode": make_discomode,
+        "gamegetlink": make_gamegetlink,
+        "linkmydevice": make_linkmydevice,
+        "find_this_id_ip": make_find_this_id_ip,
     }
 
     sizes_ico = [(16, 16), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)]
