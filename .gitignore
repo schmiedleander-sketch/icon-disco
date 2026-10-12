@@ -1,0 +1,4 @@
+apps/discomode/*.exe
+build/
+dist/
+*.spec
