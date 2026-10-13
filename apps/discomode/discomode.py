@@ -10,7 +10,10 @@ from PIL import Image, ImageTk
 def get_base_dir():
     if getattr(sys, 'frozen', False):
         return sys._MEIPASS
-    return os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+    # Look for icons relative to current script
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    repo_root = os.path.abspath(os.path.join(current_dir, "..", ".."))
+    return repo_root
 
 class DiscoDancer:
     def __init__(self, canvas, img_path, name, x, y):
@@ -76,7 +79,8 @@ class DiscoDancer:
             hue = (t * 50 + self.hue_offset) % 360
             spot_color = f"#{int(127 + 127*math.sin(math.radians(hue))):02x}{int(127 + 127*math.sin(math.radians(hue+120))):02x}{int(127 + 127*math.sin(math.radians(hue+240))):02x}"
 
-        self.canvas.coords(self.spotlight_id, cur_x, 50, cur_x - 50, cur_x + 50, cur_x + 50, cur_y + 40)
+        self.canvas.coords(self.spotlight_id, cur_x, 50, cur_x - 50, cur_y + 40, cur_x + 50, cur_y + 40)
+        self.canvas.itemconfig(self.spotlight_id, fill=spot_color if random.random() < 0.3 else "")
 
 
 class DiscoApp(tk.Tk):
